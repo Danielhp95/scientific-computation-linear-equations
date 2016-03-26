@@ -10,20 +10,25 @@ double *BGauss(double **A, double *y, int N, int B) {
 
   int isSingular = BreduceToUpperTriangular(A, y, N, B);
 
-  double *roots;
+  double roots[N+1];
   //roots = (double *) malloc(sizeof(double) * (N + 1));
-
+  BprintMatrix(A, N, B);
   int middleIndex = B+1;
-  for (int i = N; i <= 1; i--) {
-    double known_coefficients = 0.0;
-    for (int j = middleIndex; j <= (2*B + 1); j++) {
-      if (A[i][j] != 0.0) {
-        known_coefficients += roots[i+j] * A[i][j];
-      }
-      roots[i] = (y[i] - known_coefficients) / A[i][middleIndex];
-    }
-  }
 
+  for (int i = N; i >= 1; i--) {
+    double known_coefficients = 0.0;
+    for (int j = 1; j <= B; j++) {
+      if (A[i][middleIndex+j] != 0.0) {
+        known_coefficients += roots[i+j] * A[i][j+middleIndex];
+      }
+    }
+    printf("i: %i\n", i);
+
+    roots[i] = (y[i] - known_coefficients) / A[i][middleIndex];
+  }
+  for (int i = 1; i <= N; i++) {
+    printf("r: %0.2f ", roots[i]);
+  }
   return roots;
 }
 

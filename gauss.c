@@ -10,7 +10,7 @@ double *Gauss(double **A, double *y, int N) {
 
   int isSingular = reduceToUpperTriangular(A, y, N);
 
-  double *roots;
+  double roots[N+1];
   //roots = (double *) malloc(sizeof(double) * (N + 1));
 
   for (int i = N; i >= 0; i--) {
@@ -22,7 +22,7 @@ double *Gauss(double **A, double *y, int N) {
   }
   for (int i = 1; i <= N; i++) {
     printf("r: %0.2f ", roots[i]);
-  }                                                                                                                                                                                                                    
+  }
   return roots;
 }
 
