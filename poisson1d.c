@@ -3,13 +3,13 @@
 
 #define ROUGH  80
 #define SMOOTH 40
+#define GIGA 10e-9
 
 void runApproximation1D(int N);
 
 double max(double *A, int N, int *index) {
   double max = A[1];
   for (int i = 2; i <= N; i++) {
-    printf("%f \n", A[i]);
     if (A[i] > max) {
       max = A[i];
       *index = i;
@@ -91,9 +91,9 @@ int main() {
        use clock(); for timing
   */
 
-  //for (int N = 8; N < (int) pow(2, 30); N *= 2) {
-    runApproximation1D(8);
-  //}
+  for (int N = 8; N < (int) pow(2, 30); N *= 2) {
+    runApproximation1D(N);
+  }
 
 
 }
@@ -108,14 +108,13 @@ void runApproximation1D(int N) {
     y = createYvector(y, N, ROUGH);
     A = createMatrix(A, N);
     A = populateMatrix1D(A, N);
-    printMatrix(A, N);
-    //printMatrix(A, N);
 
     /* ROUGH estimations */
     double start = clock();
     double *rough_roots_gauss = Gauss(A, y, N); // Run gauss
     gauss_time = clock() - start;
     max_rough = max(rough_roots_gauss, N, &rough_x_max);
+    gauss_flops = operations * GIGA;
 
     free(y);
     freeMatrix(A, N);
@@ -125,12 +124,20 @@ void runApproximation1D(int N) {
     start = clock();
     double *roots_bgauss = BGauss(A, y, N, 1);  //B = 1 always Run bgauss
     bgauss_time = clock() - start;
+    bgauss_flop = operations * GIGA;
 
     free(y);
     freeMatrix(A, N);
+
     /* SMOOTH estimationa */
+    y = createYvector(y, N, SMOOTH);
+    A = createBandedMatrix(A, N);
+    double *smooth_roots = BGauss(A, y, N, 1);
+    max_smooth = max(smooth_roots, N, &smooth_x_max);
+    free(y);
+    freeMatrix(A, N);
 
-
-    printf("%i %0.4f %i %0.4f %i %0.5f %i %0.5f %i\n", N, max_rough, rough_x_max, max_smooth, smooth_x_max,
+    printf("%i %0.4f %i %0.4f %i %0.5f %0.5f %0.5f %0.5f\n", N, max_rough, rough_x_max/N, max_smooth, smooth_x_max/N,
                   gauss_time, gauss_flops, bgauss_time, bgauss_flop);
 }
+
