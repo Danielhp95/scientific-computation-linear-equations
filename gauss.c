@@ -6,6 +6,7 @@ int reduceToUpperTriangular(double **A, double *y, int N);
 
 //IT IS STUPID BUT START AT A[1][1].
 double *Gauss(double **A, double *y, int N) {
+  operations = 0;
 
   int isSingular = reduceToUpperTriangular(A, y, N);
 
@@ -14,9 +15,9 @@ double *Gauss(double **A, double *y, int N) {
   for (int i = N; i >= 0; i--) {
     double known_coefficients = 0.0;
     for (int j = i + 1; j <= N; j++) {
-      known_coefficients += roots[j] * A[i][j];
+      known_coefficients += roots[j] * A[i][j]; operations += 2;
     }
-    roots[i] = (y[i] - known_coefficients) / A[i][i];
+    roots[i] = (y[i] - known_coefficients) / A[i][i]; operations += 2;
   }
   return roots;
 }
@@ -27,11 +28,11 @@ int reduceToUpperTriangular(double **A, double *y, int N) {
       if (A[j][i] == 0) {
         // Do nothing
       } else {
-        double coefficient = A[j][i] / A[i][i];
+        double coefficient = A[j][i] / A[i][i]; operations++;
         for (int t = i; t <= N; t++) {
-          A[j][t] -= A[i][t] * coefficient;
+          A[j][t] -= A[i][t] * coefficient; operations += 2;
         }
-        y[j] -= y[i] * coefficient;
+        y[j] -= y[i] * coefficient; operations += 2;
         if (A[i][i] == 0.0) {
           return 1; // Matrix has been found to be singular.
         }

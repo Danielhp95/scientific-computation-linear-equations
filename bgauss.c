@@ -6,6 +6,7 @@ int BreduceToUpperTriangular(double **A, double *y, int N, int B);
 
 //IT IS STUPID BUT START AT A[1][1].
 double *BGauss(double **A, double *y, int N, int B) {
+  operations = 0;
 
   int isSingular = BreduceToUpperTriangular(A, y, N, B);
 
@@ -16,10 +17,10 @@ double *BGauss(double **A, double *y, int N, int B) {
     double known_coefficients = 0.0;
     for (int j = 1; j <= B; j++) {
       if (A[i][middleIndex+j] != 0.0) {
-        known_coefficients += roots[i+j] * A[i][j+middleIndex];
+        known_coefficients += roots[i+j] * A[i][j+middleIndex]; operations += 2;
       }
     }
-    roots[i] = (y[i] - known_coefficients) / A[i][middleIndex];
+    roots[i] = (y[i] - known_coefficients) / A[i][middleIndex]; operations += 2;
   }
 
   return roots;
@@ -32,11 +33,11 @@ int BreduceToUpperTriangular(double **A, double *y, int N, int B) {
       return 1; // Matrix has been found to be singular
     }
     for (int j = 1; (j <= B && j + i <= N); j++) {
-      double coefficient = A[i+j][middleIndex-j] / A[i][middleIndex];
+      double coefficient = A[i+j][middleIndex-j] / A[i][middleIndex]; operations++;
       for (int t = 0; t <= B; t++) {
-        A[i+j][(middleIndex-j) + t] -= coefficient * A[i][middleIndex + t];
+        A[i+j][(middleIndex-j) + t] -= coefficient * A[i][middleIndex + t]; operations += 2;
       }
-      y[i+j] -= coefficient * y[i];
+      y[i+j] -= coefficient * y[i]; operations += 2;
     }
   }
   return 0; // Matrix has been succesfully reduced
