@@ -3,18 +3,15 @@
 
 // Returns if Matrix is singular or not.
 int BreduceToUpperTriangular(double **A, double *y, int N, int B);
-int isRowSingular(double *row, int N);
 
 //IT IS STUPID BUT START AT A[1][1].
 double *BGauss(double **A, double *y, int N, int B) {
 
   int isSingular = BreduceToUpperTriangular(A, y, N, B);
 
-  double roots[N+1];
-  //roots = (double *) malloc(sizeof(double) * (N + 1));
-  BprintMatrix(A, N, B);
-  int middleIndex = B+1;
+  double *roots = malloc(sizeof(double) * (N+1));
 
+  int middleIndex = B+1;
   for (int i = N; i >= 1; i--) {
     double known_coefficients = 0.0;
     for (int j = 1; j <= B; j++) {
@@ -22,13 +19,9 @@ double *BGauss(double **A, double *y, int N, int B) {
         known_coefficients += roots[i+j] * A[i][j+middleIndex];
       }
     }
-    printf("i: %i\n", i);
-
     roots[i] = (y[i] - known_coefficients) / A[i][middleIndex];
   }
-  for (int i = 1; i <= N; i++) {
-    printf("r: %0.2f ", roots[i]);
-  }
+
   return roots;
 }
 
@@ -47,15 +40,6 @@ int BreduceToUpperTriangular(double **A, double *y, int N, int B) {
     }
   }
   return 0; // Matrix has been succesfully reduced
-}
-
-int isRowSingular(double *row, int N) {
-  for (int i = 1; i <=N; i++) {
-    if (row[i] != 0) {
-      return 0;
-    }
-  }
-  return 1;
 }
 
 void BprintMatrix(double **A, int N, int B) {
