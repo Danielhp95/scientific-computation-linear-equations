@@ -1,5 +1,6 @@
 #include <math.h>
-#include "stdio.h"
+#include <stdio.h>
+#include <omp.h>
 #include <stdlib.h>
 #include <float.h>
 

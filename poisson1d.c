@@ -58,11 +58,11 @@ double **createBandedMatrix(double **A, int N) {
   return A;
 }
 
-double *createYvector(double *y, int N, int value) {
+double *createYvector(double *y, int N, int value, double delta) {
   y = malloc(sizeof(double) * (N+1));
   for (int i = 1; i <= N; i++) {
     if (i > (N/4) && i <= (N/2)) {
-      y[i] = value;
+      y[i] = -(delta * delta) * value;
     } else {
       y[i] = 0;
     }
@@ -104,44 +104,41 @@ void runApproximation1D(int N) {
     int rough_x_max, smooth_x_max;
     double *y;
     double **A;
+    double delta = 1.0 / (double) N;
 
-    y = createYvector(y, N, ROUGH);
-    A = createMatrix(A, N);
-    A = populateMatrix1D(A, N);
+    y = createYvector(y, N, ROUGH, delta);
+    A = createMatrix(A, N-1);
+    A = populateMatrix1D(A, N-1);
 
     /* ROUGH estimations */
     double start = clock();
-    double *rough_roots_gauss = Gauss(A, y, N); // Run gauss
+    double *rough_roots_gauss = Gauss(A, y, N-1); // Run gauss
     gauss_time = (clock() - start) / CLOCKS_PER_SEC;
     max_rough = max(rough_roots_gauss, N, &rough_x_max);
     gauss_flops = operations * GIGA;
 
     free(y);
-    freeMatrix(A, N);
+    freeMatrix(A, N-1);
     free(rough_roots_gauss);
 
-    y = createYvector(y, N, ROUGH);
-    A = createBandedMatrix(A, N);
+    y = createYvector(y, N, ROUGH, delta);
+    A = createBandedMatrix(A, N-1);
     start = clock();
-    double *roots_bgauss = BGauss(A, y, N, 1);  //B = 1 always Run bgauss
+    double *roots_bgauss = BGauss(A, y, N-1, 1);  //B = 1 always Run bgauss
     bgauss_time = (clock() - start) / CLOCKS_PER_SEC;
     bgauss_flop = operations * GIGA;
 
-    for (int i = 1; i <= N; i++) {
-      printf("%f\n", roots_bgauss[i]);
-    }
-
     free(y);
-    freeMatrix(A, N);
+    freeMatrix(A, N-1);
     free(roots_bgauss);
 
     /* SMOOTH estimationa */
-    y = createYvector(y, N, SMOOTH);
-    A = createBandedMatrix(A, N);
-    double *smooth_roots = BGauss(A, y, N, 1);
+    y = createYvector(y, N, SMOOTH, delta);
+    A = createBandedMatrix(A, N-1);
+    double *smooth_roots = BGauss(A, y, N-1, 1);
     max_smooth = max(smooth_roots, N, &smooth_x_max);
     free(y);
-    freeMatrix(A, N);
+    freeMatrix(A, N-1);
     free(smooth_roots);
 
     printf("%i %0.4f %0.4f %0.4f %0.4f %0.8f %0.5Lf %0.8f %0.5Lf\n", N, max_rough, rough_x_max/(double)N, max_smooth, smooth_x_max/(double)N,
