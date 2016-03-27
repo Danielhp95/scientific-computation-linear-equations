@@ -7,3 +7,6 @@ double *Gauss(double **, double *, int );
 double *BGauss(double **, double *, int , int);
 void printMatrix(double **A, int N);
 void BprintMatrix(double **A, int N, int B);
+
+
+int operations;
