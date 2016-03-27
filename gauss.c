@@ -15,6 +15,7 @@ double *Gauss(double **A, double *y, int N) {
 
   double *roots = malloc(sizeof(double) * (N + 1));
 
+  #pragma omp parallel
   for (int i = N; i >= 0; i--) {
     double known_coefficients = 0.0;
     for (int j = i + 1; j <= N; j++) {
@@ -26,6 +27,7 @@ double *Gauss(double **A, double *y, int N) {
 }
 
 int reduceToUpperTriangular(double **A, double *y, int N) {
+  #pragma omp parallel 
   for (int i = 1; i < N; i++) {
     for (int j = i + 1; j <= N; j++) {
       if (A[j][i] == 0) {

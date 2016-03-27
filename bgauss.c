@@ -16,6 +16,7 @@ double *BGauss(double **A, double *y, int N, int B) {
   double *roots = malloc(sizeof(double) * (N+1));
 
   int middleIndex = B+1;
+  #pragma omp parallel
   for (int i = N; i >= 1; i--) {
     double known_coefficients = 0.0;
     for (int j = 1; j <= B; j++) {
@@ -31,6 +32,7 @@ double *BGauss(double **A, double *y, int N, int B) {
 
 int BreduceToUpperTriangular(double **A, double *y, int N, int B) {
   int middleIndex = B + 1;
+  #pragma omp parallel
   for (int i = 1; i < N; i++) {
     if (A[i][middleIndex] == 0.0) {
       return 1; // Matrix has been found to be singular
