@@ -9,6 +9,9 @@ double *Gauss(double **A, double *y, int N) {
   operations = 0;
 
   int isSingular = reduceToUpperTriangular(A, y, N);
+  if (isSingular) {
+    return NULL;
+  }
 
   double *roots = malloc(sizeof(double) * (N + 1));
 

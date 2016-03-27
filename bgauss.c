@@ -9,6 +9,9 @@ double *BGauss(double **A, double *y, int N, int B) {
   operations = 0;
 
   int isSingular = BreduceToUpperTriangular(A, y, N, B);
+  if (isSingular) {
+    return NULL;
+  }
 
   double *roots = malloc(sizeof(double) * (N+1));
 
