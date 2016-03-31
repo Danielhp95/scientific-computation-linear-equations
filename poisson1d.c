@@ -115,7 +115,7 @@ void runApproximation1D(int N) {
     double *rough_roots_gauss = Gauss(A, y, N-1); // Run gauss
     gauss_time = (clock() - start) / CLOCKS_PER_SEC;
     max_rough = max(rough_roots_gauss, N, &rough_x_max);
-    gauss_flops = operations * GIGA;
+    gauss_flops = operations * GIGA / gauss_time;
 
     free(y);
     freeMatrix(A, N-1);
@@ -126,7 +126,7 @@ void runApproximation1D(int N) {
     start = clock();
     double *roots_bgauss = BGauss(A, y, N-1, 1);  //B = 1 always Run bgauss
     bgauss_time = (clock() - start) / CLOCKS_PER_SEC;
-    bgauss_flop = operations * GIGA;
+    bgauss_flop = (operations * GIGA) / bgauss_time;
 
     free(y);
     freeMatrix(A, N-1);
